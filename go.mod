@@ -1,4 +1,4 @@
-module github.com/yahya077/go-handler
+module github.com/yahya077/gohandler
 
 go 1.19
 
