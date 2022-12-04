@@ -7,7 +7,7 @@ import (
 
 type IBaseHandler interface {
 	Handle(service interface{}, method string) error
-	SetRequest(request IRequest) BaseHandler
+	WithRequest(request IRequest) BaseHandler
 	GetValueOfC() []reflect.Value
 	CallServiceMethod(service interface{}, method string) error
 	WithHandler(handler IHandler) IBaseHandler
@@ -26,7 +26,7 @@ type BaseHandler struct {
 type Handler struct {
 }
 
-func (h BaseHandler) SetRequest(request IRequest) BaseHandler {
+func (h BaseHandler) WithRequest(request IRequest) BaseHandler {
 	h.Request = request
 	return h
 }
@@ -44,8 +44,10 @@ func (h BaseHandler) Handle(service interface{}, method string) error {
 		}
 	}
 
-	if e := h.Handler.LocalBinding(h.C); e != nil {
-		return h.C.SendStatus(fiber.StatusNotFound)
+	if h.Handler != nil {
+		if e := h.Handler.LocalBinding(h.C); e != nil {
+			return h.C.SendStatus(fiber.StatusNotFound)
+		}
 	}
 
 	return h.CallServiceMethod(service, method)
